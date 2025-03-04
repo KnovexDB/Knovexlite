@@ -3,26 +3,27 @@ from typing import Optional, List
 from random import choice
 
 from torch_geometric.nn import MessagePassing
-from torch_geometric.data import Data, Batch
+from torch_geometric.data import Batch
 import torch
 from torch import nn
 from torch.nn import functional as F
 
 
-from engine.structure.kg_embedding.kge_interface import (
+from engine.structure.kg_embedding.abstract_kge import (
     KnowledgeGraphEmbedding as KGE,
 )
-from engine.reasoner.reasoner import Reasoner
+from engine.reasoner.abstract_reasoner import Reasoner
+from engine.layers.mlp import MLP
 
 logger = logging.getLogger(__name__)
 
 
 class LMPLayerBiasOnly(MessagePassing):
     def __init__(
-        self, embedding_dim, hidden_size, num_hidden_layers, nbp: Optional[NBP]
+        self, embedding_dim, hidden_size, num_hidden_layers, kge: Optional[KGE]
     ):
         super(LMPLayerBiasOnly, self).__init__(aggr="add")
-        self.nbp: NBP = nbp
+        self.kge: KGE = kge
         self.bias: nn.Parameter = None
         self.scale: nn.Parameter = None
         self.entity_emb = None
@@ -42,8 +43,8 @@ class LMPLayerBiasOnly(MessagePassing):
 
     def message(self, x_j, edge_attr):
         relation_id, neg_flag = edge_attr[:, 0], edge_attr[:, 1]
-        relation_embedding = self.nbp.get_rel_emb(relation_id)
-        tail_pred = self.nbp.estimate_tail_emb(x_j, relation_embedding)
+        relation_embedding = self.kge.get_rel_emb(relation_id)
+        tail_pred = self.kge.estimate_tail_emb(x_j, relation_embedding)
 
         neg_coef = 1 - 2 * neg_flag.float()
 
@@ -62,10 +63,10 @@ class LMPLayerBiasOnly(MessagePassing):
 
 class LMPLayer(MessagePassing):
     def __init__(
-        self, embedding_dim, hidden_size, num_hidden_layers, nbp: Optional[NBP]
+        self, embedding_dim, hidden_size, num_hidden_layers, nbp: Optional[KGE]
     ):
         super(LMPLayer, self).__init__(aggr="add")
-        self.nbp: NBP = nbp
+        self.nbp: KGE = nbp
         self.update_net = MLP(
             embedding_dim, embedding_dim, hidden_size, num_hidden_layers
         )
@@ -106,7 +107,7 @@ class LMPNN(nn.Module, Reasoner):
         **kwargs,
     ):
         super(LMPNN, self).__init__()
-        self.nbp: Optional[NBP] = None
+        self.nbp: Optional[KGE] = None
         self.hidden_size = hidden_size
         self.num_hidden_layers = num_hidden_layers
         self.embedding_dim = embedding_dim
@@ -126,9 +127,9 @@ class LMPNN(nn.Module, Reasoner):
             )
         self.loss = loss
 
-    def set_nbp(self, nbp: NBP):
+    def set_nbp(self, nbp: KGE):
         self.nbp = nbp
-        self.lmp.nbp = nbp
+        self.lmp.kge = nbp
         if hasattr(self.lmp, "bias"):
             self.lmp.bias = nn.Parameter(
                 torch.zeros(nbp.num_entities, device=nbp.device)

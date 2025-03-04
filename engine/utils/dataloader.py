@@ -8,7 +8,7 @@ from torch_geometric.data import Batch, Data
 import tqdm
 
 
-from src.language.efo_lang import EFOQuery, parse_lstr_to_lformula
+from engine.language.efo_lang import EFOQuery, parse_lstr_to_lformula
 
 logger = logging.getLogger(__name__)
 

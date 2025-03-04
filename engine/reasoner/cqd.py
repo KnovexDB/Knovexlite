@@ -7,10 +7,10 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from engine.structure.kg_embedding.kge_interface import (
+from engine.structure.kg_embedding.abstract_kge import (
     KnowledgeGraphEmbedding as KGE,
 )
-from engine.reasoner.reasoner import Reasoner
+from engine.reasoner.abstract_reasoner import Reasoner
 from engine.utils.data import VariadicMatrix, aggregation
 
 logger = logging.getLogger(__name__)

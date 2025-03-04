@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import math
 
-from .kge_interface import KnowledgeGraphEmbedding
+from .abstract_kge import KnowledgeGraphEmbedding
 
 
 class ConvEScorer(nn.Module):

@@ -5,7 +5,7 @@ from matplotlib.pylab import f
 import torch
 from torch import nn
 
-from .kge_interface import KnowledgeGraphEmbedding
+from .abstract_kge import KnowledgeGraphEmbedding
 
 logger = logging.getLogger(__name__)
 

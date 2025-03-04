@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from .kge_interface import KnowledgeGraphEmbedding
+from .abstract_kge import KnowledgeGraphEmbedding
 
 
 class RESCAL(nn.Module, KnowledgeGraphEmbedding):

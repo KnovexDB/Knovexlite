@@ -3,7 +3,7 @@ import logging
 import torch
 from torch_geometric.utils import index_to_mask
 
-from src.utils.data import VariadicMatrix
+from engine.utils.data import VariadicMatrix
 
 logger = logging.getLogger(__name__)
 
