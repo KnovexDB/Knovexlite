@@ -1,17 +1,20 @@
 import torch
 from torch import nn
 
-from .neural_binary_predicate import NeuralBinaryPredicate
+from .kge_interface import KnowledgeGraphEmbedding
 
 
-class RotatE(NeuralBinaryPredicate, nn.Module):
-    def __init__(self,
-                 num_entities: int,
-                 num_relations: int,
-                 embedding_dim: int,
-                 scale: float = 1,
-                 init_size: float = 1e-3,
-                 device = 'cpu', **kwargs):
+class RotatE(KnowledgeGraphEmbedding, nn.Module):
+    def __init__(
+        self,
+        num_entities: int,
+        num_relations: int,
+        embedding_dim: int,
+        scale: float = 1,
+        init_size: float = 1e-3,
+        device="cpu",
+        **kwargs,
+    ):
         super(RotatE, self).__init__()
 
         self.num_entities = num_entities
@@ -20,7 +23,7 @@ class RotatE(NeuralBinaryPredicate, nn.Module):
         self.device = device
         self.scale = scale
 
-        self._entity_embedding = nn.Embedding(num_entities, 2*embedding_dim)
+        self._entity_embedding = nn.Embedding(num_entities, 2 * embedding_dim)
         self._entity_embedding.weight.data *= init_size
 
         self._relation_embedding = nn.Embedding(num_relations, embedding_dim)
@@ -34,7 +37,6 @@ class RotatE(NeuralBinaryPredicate, nn.Module):
     def relation_embedding(self):
         return self._relation_embedding.weight
 
-
     def embedding_score(self, head_emb, rel_emb, tail_emb):
         # lhs = head_emb[..., :self.rank], head_emb[..., self.rank:]
         # rel = rel_emb[..., :self.rank],  rel_emb[..., self.rank:]
@@ -47,22 +49,34 @@ class RotatE(NeuralBinaryPredicate, nn.Module):
         return self.entity_pair_scoring(est_tail, tail_emb)
 
     def estimate_tail_emb(self, head_emb, rel_emb):
-        lhs = head_emb[:, :self.embedding_dim], head_emb[:, self.embedding_dim:]
+        lhs = (
+            head_emb[:, : self.embedding_dim],
+            head_emb[:, self.embedding_dim :],
+        )
         rel = torch.cos(rel_emb), torch.sin(rel_emb)
 
-        return torch.cat([
-            lhs[0] * rel[0] - lhs[1] * rel[1],
-            lhs[0] * rel[1] + lhs[1] * rel[0]
-        ], 1)
+        return torch.cat(
+            [
+                lhs[0] * rel[0] - lhs[1] * rel[1],
+                lhs[0] * rel[1] + lhs[1] * rel[0],
+            ],
+            1,
+        )
 
     def estimate_head_emb(self, tail_emb, rel_emb):
-        rhs = tail_emb[:, :self.embedding_dim], tail_emb[:, self.embedding_dim:]
+        rhs = (
+            tail_emb[:, : self.embedding_dim],
+            tail_emb[:, self.embedding_dim :],
+        )
         rel = torch.cos(rel_emb), torch.sin(rel_emb)
 
-        return torch.cat([
-            rhs[0] * rel[0] - rhs[1] * rel[1],
-            rhs[0] * rel[1] + rhs[1] * rel[0]
-        ], 1)
+        return torch.cat(
+            [
+                rhs[0] * rel[0] - rhs[1] * rel[1],
+                rhs[0] * rel[1] + rhs[1] * rel[0],
+            ],
+            1,
+        )
 
     # def estiamte_rel_emb(self, head_emb, tail_emb):
     #     lhs = head_emb[:, :self.embedding_dim], head_emb[:, self.embedding_dim:]
@@ -76,7 +90,7 @@ class RotatE(NeuralBinaryPredicate, nn.Module):
     def get_relation_emb(self, relation_id_or_tensor, inv=False):
         rel_id = torch.tensor(relation_id_or_tensor, device=self.device)
         if inv:
-            pair_id = torch.div(rel_id, 2, rounding_mode='floor')
+            pair_id = torch.div(rel_id, 2, rounding_mode="floor")
             origin_modulo_id = torch.remainder(rel_id, 2)
             inv_modulo_id_raw = origin_modulo_id + 1
             inv_modulo_id = torch.remainder(inv_modulo_id_raw, 2)
@@ -92,4 +106,10 @@ class RotatE(NeuralBinaryPredicate, nn.Module):
         return scores
 
     def get_random_entity_embed(self, batch_size):
-        return torch.normal(0, 1e-3, (batch_size, self.embedding_dim * 2), device=self.device, requires_grad=True)
+        return torch.normal(
+            0,
+            1e-3,
+            (batch_size, self.embedding_dim * 2),
+            device=self.device,
+            requires_grad=True,
+        )

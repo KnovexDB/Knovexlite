@@ -4,13 +4,11 @@ import logging
 
 
 import torch
-from torch import nn
-
-from src.structure.adaptor import ScalarAdaptor, ScoreAdaptor, VectorAdaptor, AutoScoreAdaptor
 
 logger = logging.getLogger(__name__)
 
-class NeuralBinaryPredicate:
+
+class KnowledgeGraphEmbedding:
     num_entities: int
     num_relations: int
     device: torch.device
@@ -44,22 +42,6 @@ class NeuralBinaryPredicate:
             The tensor of embeddings in the shape [..., embed_dim]
         """
         pass
-
-    def set_score_adaptor(self, adaptor: Optional[ScoreAdaptor]=None):
-        logger.info(f"Set score adaptor to {adaptor}")
-        if adaptor is None:
-            self.score_adaptor = ScalarAdaptor(1 / 10)
-            # self.score_adaptor = AutoScoreAdaptor(self._entity_embedding.weight)
-        else:
-            self.score_adaptor = adaptor
-
-    def set_vector_adaptor(self, adaptor: Optional[nn.Module]=None):
-        logger.info(f"Set vector adaptor to {adaptor}")
-        if adaptor is None:
-            self.vector_adaptor = ScalarAdaptor(1)
-            # self.vector_adaptor = AutoScoreAdaptor(self._entity_embedding.weight)
-        else:
-            self.vector_adaptor = adaptor
 
     @abstractmethod
     def embedding_score(
@@ -109,9 +91,7 @@ class NeuralBinaryPredicate:
         """
 
         if isinstance(input_id, list):
-            input_id = torch.tensor(
-                input_id, dtype=torch.long, device=self.device
-            )
+            input_id = torch.tensor(input_id, dtype=torch.long, device=self.device)
         assert isinstance(input_id, torch.Tensor)
         if input_id.device != self.device:
             input_id = input_id.to(self.device)
@@ -179,8 +159,6 @@ class NeuralBinaryPredicate:
 
         if negation is not None:
             # score = (1 - negation) * score + negation * (1 - score)
-            score = torch.where(
-                negation == 1, - score, score
-            )
+            score = torch.where(negation == 1, -score, score)
 
         return score

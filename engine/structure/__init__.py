@@ -6,31 +6,31 @@ from engine.structure.kg.index import KGIndex
 
 def get_nbp(name, ckpt, **kwargs):
     if name.lower() == "transe":
-        from kg_embedding.nbp_transe import TransE
+        from engine.structure.kg_embedding.transe import TransE
 
         nbp = TransE(**kwargs)
     elif name.lower() == "swtranse":
-        from kg_embedding.nbp_swtranse import SWTransE
+        from engine.structure.kg_embedding.swtranse import SWTransE
 
         nbp = SWTransE(**kwargs)
     elif name.lower() == "complex":
-        from kg_embedding.nbp_complex import ComplEx
+        from engine.structure.kg_embedding.complex import ComplEx
 
         nbp = ComplEx(**kwargs)
     elif name.lower() == "rotate":
-        from kg_embedding.nbp_rotate import RotatE
+        from engine.structure.kg_embedding.rotate import RotatE
 
         nbp = RotatE(**kwargs)
     elif name.lower() == "distmult":
-        from kg_embedding.nbp_distmult import DistMult
+        from engine.structure.kg_embedding.distmult import DistMult
 
         nbp = DistMult(**kwargs)
     elif name.lower() == "conve":
-        from kg_embedding.nbp_conve import ConvE
+        from engine.structure.kg_embedding.conve import ConvE
 
         nbp = ConvE(**kwargs)
     elif name.lower() == "rescal":
-        from kg_embedding.nbp_rescal import RESCAL
+        from engine.structure.kg_embedding.rescal import RESCAL
 
         nbp = RESCAL(**kwargs)
     else:

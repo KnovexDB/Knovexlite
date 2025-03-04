@@ -8,8 +8,11 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from src.structure.neural_binary_predicate import NeuralBinaryPredicate as NBP
-from src.reasoner.reasoner import Reasoner, MLP
+
+from engine.structure.kg_embedding.kge_interface import (
+    KnowledgeGraphEmbedding as KGE,
+)
+from engine.reasoner.reasoner import Reasoner
 
 logger = logging.getLogger(__name__)
 

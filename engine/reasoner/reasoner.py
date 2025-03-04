@@ -5,7 +5,9 @@ import torch
 from torch import nn
 from torch_geometric.data import Batch
 
-from src.structure.neural_binary_predicate import NeuralBinaryPredicate as NBP
+from engine.structure.kg_embedding.kge_interface import (
+    KnowledgeGraphEmbedding as KGE,
+)
 
 
 class MLP(nn.Module):
