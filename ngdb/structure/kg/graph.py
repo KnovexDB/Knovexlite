@@ -4,8 +4,8 @@ from typing import List, Tuple, NewType
 import torch
 from torch_geometric.data import Data
 
-from src.structure.knowledge_graph_index import KGIndex
-from src.utils.data import iter_triple_from_tsv
+from ngdb.structure.knowledge_graph_index import KGIndex
+from ngdb.utils.data import iter_triple_from_tsv
 
 Triple = NewType("Triple", Tuple[int, int, int])
 

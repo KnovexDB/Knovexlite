@@ -1,36 +1,33 @@
 import torch
 
-from engine.structure.kg.graph import KnowledgeGraph
-from engine.structure.kg.index import KGIndex
-
 
 def get_nbp(name, ckpt, **kwargs):
     if name.lower() == "transe":
-        from engine.structure.kg_embedding.transe import TransE
+        from ngdb.structure.kg_embedding.transe import TransE
 
         nbp = TransE(**kwargs)
     elif name.lower() == "swtranse":
-        from engine.structure.kg_embedding.swtranse import SWTransE
+        from ngdb.structure.kg_embedding.swtranse import SWTransE
 
         nbp = SWTransE(**kwargs)
     elif name.lower() == "complex":
-        from engine.structure.kg_embedding.complex import ComplEx
+        from ngdb.structure.kg_embedding.complex import ComplEx
 
         nbp = ComplEx(**kwargs)
     elif name.lower() == "rotate":
-        from engine.structure.kg_embedding.rotate import RotatE
+        from ngdb.structure.kg_embedding.rotate import RotatE
 
         nbp = RotatE(**kwargs)
     elif name.lower() == "distmult":
-        from engine.structure.kg_embedding.distmult import DistMult
+        from ngdb.structure.kg_embedding.distmult import DistMult
 
         nbp = DistMult(**kwargs)
     elif name.lower() == "conve":
-        from engine.structure.kg_embedding.conve import ConvE
+        from ngdb.structure.kg_embedding.conve import ConvE
 
         nbp = ConvE(**kwargs)
     elif name.lower() == "rescal":
-        from engine.structure.kg_embedding.rescal import RESCAL
+        from ngdb.structure.kg_embedding.rescal import RESCAL
 
         nbp = RESCAL(**kwargs)
     else:

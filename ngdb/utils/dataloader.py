@@ -89,7 +89,7 @@ class PyGAACollator:
                     pyg_data_list_by_conj_query[i].append(conj_query_list[i])
                 except IndexError:
                     raise ValueError(
-                        f"Number of conj queries in the batch is inconsistent."
+                        "Number of conj queries in the batch is inconsistent."
                     )
             easy_answer_list.append(easy_answer)
             hard_answer_list.append(hard_answer)

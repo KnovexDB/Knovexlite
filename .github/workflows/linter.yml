@@ -20,4 +20,4 @@ jobs:
         poetry sync
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        poetry run ruff check $(git ls-files '*.py')

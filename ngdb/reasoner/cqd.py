@@ -7,11 +7,11 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from engine.structure.kg_embedding.abstract_kge import (
+from ngdb.structure.kg_embedding.abstract_kge import (
     KnowledgeGraphEmbedding as KGE,
 )
-from engine.reasoner.abstract_reasoner import Reasoner
-from engine.utils.data import VariadicMatrix, aggregation
+from ngdb.reasoner.abstract_reasoner import Reasoner
+from ngdb.utils.data import VariadicMatrix, aggregation
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ class CQDBeam(Reasoner, nn.Module):
         edge_attr = batch.edge_attr
         num_terms = batch.x.size(0)
 
-        logger.debug(f"start a problem")
+        logger.debug("start a problem")
         logger.debug(f"num_terms: {num_terms}")
         logger.debug(f"batch.x: {batch.x}")
         logger.debug(f"edge_index: {edge_index}")

@@ -11,7 +11,7 @@ dependencies = [
     "matplotlib (>=3.10.1,<4.0.0)",
     "jupyter (>=1.1.1,<2.0.0)",
     "mypy (>=1.15.0,<2.0.0)",
-    "pylint (>=3.3.4,<4.0.0)",
+    "ruff (>=0.9.9,<0.10.0)",
 ]
 
 
@@ -21,9 +21,12 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 packages = [
-    {include = "engine"},
-    {include = "language", from = "engine"},
-    {include = "reasoner", from= "engine"},
-    {include = "structure", from= "engine"},
-    {include = "utils", from= "engine"},
+    {include = "ngdb"},
+    {include = "language", from = "ngdb"},
+    {include = "reasoner", from= "ngdb"},
+    {include = "structure", from= "ngdb"},
+    {include = "utils", from= "ngdb"},
 ]
+
+[tool.pylint]
+disable = ["invalid-name"]

@@ -10,12 +10,12 @@ We use `poerty` to manage the package
 To install poetry
 
 ```
- curl -sSL https://install.python-poetry.org | python3 -
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
 To install packages
 ```
-poetry sync
+poetry install
 ```
 
 If your `poetry.lock` file is too old, use this.
@@ -23,4 +23,4 @@ If your `poetry.lock` file is too old, use this.
 poetry update --lock
 ```
 
-Currently, we don't track the `poetry.lock` file.
+Currently, we don't track the `poetry.lock` file in the early development stage
