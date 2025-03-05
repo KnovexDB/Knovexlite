@@ -4,13 +4,14 @@ version = "0.1.0"
 description = "A neural graph database engine"
 authors = [{ name = "Zihao", email = "wangzihao820@hotmail.com" }]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 dependencies = [
     "torch (>=2.6.0,<3.0.0)",
     "torch-geometric (>=2.6.1,<3.0.0)",
     "matplotlib (>=3.10.1,<4.0.0)",
     "jupyter (>=1.1.1,<2.0.0)",
     "mypy (>=1.15.0,<2.0.0)",
+    "pylint (>=3.3.4,<4.0.0)",
 ]
 
 
