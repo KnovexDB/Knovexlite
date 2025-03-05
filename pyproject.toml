@@ -21,12 +21,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 packages = [
-    {include = "ngdb"},
-    {include = "language", from = "ngdb"},
-    {include = "reasoner", from= "ngdb"},
-    {include = "structure", from= "ngdb"},
-    {include = "utils", from= "ngdb"},
+    { include = "ngdb" },
+    { include = "language", from = "ngdb" },
+    { include = "reasoner", from = "ngdb" },
+    { include = "structure", from = "ngdb" },
+    { include = "utils", from = "ngdb" },
 ]
-
-[tool.pylint]
-disable = ["invalid-name"]
