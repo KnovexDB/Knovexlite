@@ -21,9 +21,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 packages = [
-    { include = "ngdb" },
-    { include = "language", from = "ngdb" },
-    { include = "reasoner", from = "ngdb" },
-    { include = "structure", from = "ngdb" },
-    { include = "utils", from = "ngdb" },
+    { include = "knovex" },
+    { include = "language", from = "knovex" },
+    { include = "reasoner", from = "knovex" },
+    { include = "structure", from = "knovex" },
+    { include = "utils", from = "knovex" },
 ]

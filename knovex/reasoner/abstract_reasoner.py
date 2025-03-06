@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import torch
 from torch_geometric.data import Batch
 
-from ngdb.structure.kg_embedding.abstract_kge import (
+from knovex.structure.kg_embedding.abstract_kge import (
     KnowledgeGraphEmbedding as KGE,
 )
 

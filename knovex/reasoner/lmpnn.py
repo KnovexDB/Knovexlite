@@ -9,11 +9,11 @@ from torch import nn
 from torch.nn import functional as F
 
 
-from ngdb.structure.kg_embedding.abstract_kge import (
+from knovex.structure.kg_embedding.abstract_kge import (
     KnowledgeGraphEmbedding as KGE,
 )
-from ngdb.reasoner.abstract_reasoner import Reasoner
-from ngdb.layers.mlp import MLP
+from knovex.reasoner.abstract_reasoner import Reasoner
+from knovex.layers.mlp import MLP
 
 logger = logging.getLogger(__name__)
 

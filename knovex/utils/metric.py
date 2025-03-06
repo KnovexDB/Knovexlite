@@ -1,7 +1,7 @@
 from collections import defaultdict
 import torch
 
-from ngdb.language.efo_lang import parse_lstr_to_lformula
+from knovex.language.efo_lang import parse_lstr_to_lformula
 
 beta_lstr_list = [
     "r1(s1,f)",  # 1p
