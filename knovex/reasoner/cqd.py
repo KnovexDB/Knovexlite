@@ -1,17 +1,17 @@
 import logging
 from typing import Optional, List, Dict, Tuple
 
-from networkx import constraint
-from sympy import refine
 from torch_geometric.data import Batch
-from torch_geometric.utils import index_to_mask, scatter
+from torch_geometric.utils import index_to_mask
 import torch
-from torch import inverse, nn
+from torch import nn
 from torch.nn import functional as F
 
-from src.structure.neural_binary_predicate import NeuralBinaryPredicate as NBP
-from src.reasoner.reasoner import Reasoner
-from src.utils.data import VariadicMatrix, aggregation, refine_index
+from knovex.structure.kg_embedding.abstract_kge import (
+    KnowledgeGraphEmbedding as KGE,
+)
+from knovex.reasoner.abstract_reasoner import Reasoner
+from knovex.utils.data import VariadicMatrix, aggregation
 
 logger = logging.getLogger(__name__)
 
@@ -35,13 +35,13 @@ class CQDBeam(Reasoner, nn.Module):
     def __init__(
         self,
         beam_size: int,
-        nbp: Optional[NBP] = None,
+        nbp: Optional[KGE] = None,
         **kwargs,
     ):
         super(CQDBeam, self).__init__()
         self.beam_size = beam_size
 
-        self.nbp: NBP = nbp
+        self.nbp: KGE = nbp
         self._search_cache: List[Dict] = []
 
     def cache_results_of_leaf_existential(self):
@@ -62,7 +62,7 @@ class CQDBeam(Reasoner, nn.Module):
         """
         pass
 
-    def set_nbp(self, nbp: NBP):
+    def set_nbp(self, nbp: KGE):
         self.nbp = nbp
 
     def train_loss(self, batch: Batch, answers: List[List[int]]):
@@ -94,7 +94,7 @@ class CQDBeam(Reasoner, nn.Module):
         edge_attr = batch.edge_attr
         num_terms = batch.x.size(0)
 
-        logger.debug(f"start a problem")
+        logger.debug("start a problem")
         logger.debug(f"num_terms: {num_terms}")
         logger.debug(f"batch.x: {batch.x}")
         logger.debug(f"edge_index: {edge_index}")

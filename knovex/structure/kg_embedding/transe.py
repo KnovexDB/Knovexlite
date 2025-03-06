@@ -1,11 +1,21 @@
-
 import torch
 from torch import nn
 
-from .neural_binary_predicate import NeuralBinaryPredicate
+from .abstract_kge import KnowledgeGraphEmbedding
 
-class TransE(nn.Module, NeuralBinaryPredicate):
-    def __init__(self, num_entities, num_relations, embedding_dim, p, margin, scale, device, **kwargs):
+
+class TransE(nn.Module, KnowledgeGraphEmbedding):
+    def __init__(
+        self,
+        num_entities,
+        num_relations,
+        embedding_dim,
+        p,
+        margin,
+        scale,
+        device,
+        **kwargs,
+    ):
         super(TransE, self).__init__()
         self.num_entities = num_entities
         self.num_relations = num_relations
@@ -27,7 +37,7 @@ class TransE(nn.Module, NeuralBinaryPredicate):
         """
         board castable for the last dimension
         """
-        return - torch.norm(head_emb + rel_emb - tail_emb, p=self.p, dim=-1)
+        return -torch.norm(head_emb + rel_emb - tail_emb, p=self.p, dim=-1)
 
     def estimate_tail_emb(self, head_emb, rel_emb):
         return head_emb + rel_emb
@@ -38,7 +48,7 @@ class TransE(nn.Module, NeuralBinaryPredicate):
     def get_relation_emb(self, relation_id_or_tensor, inv=False):
         rel_id = torch.tensor(relation_id_or_tensor, device=self.device)
         if inv:
-            pair_id = torch.div(rel_id, 2, rounding_mode='floor')
+            pair_id = torch.div(rel_id, 2, rounding_mode="floor")
             origin_modulo_id = torch.remainder(rel_id, 2)
             inv_modulo_id_raw = origin_modulo_id + 1
             inv_modulo_id = torch.remainder(inv_modulo_id_raw, 2)

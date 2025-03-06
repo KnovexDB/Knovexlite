@@ -1,17 +1,14 @@
-from html.entities import entitydefs
 from typing import Optional
 import logging
-from matplotlib.pylab import f
 import torch
 from torch import nn
 
-from src.structure.neural_binary_predicate import NeuralBinaryPredicate
-from src.structure.adaptor import ScoreAdaptor, AutoScoreAdaptor
+from .abstract_kge import KnowledgeGraphEmbedding
 
 logger = logging.getLogger(__name__)
 
 
-class ComplEx(NeuralBinaryPredicate, nn.Module):
+class ComplEx(KnowledgeGraphEmbedding, nn.Module):
 
     def __init__(
         self,
@@ -19,7 +16,7 @@ class ComplEx(NeuralBinaryPredicate, nn.Module):
         num_relations: int,
         embedding_dim: int,
         max_eval_flux: int = 100000,  # eval at most this many triples each time
-        **kwargs  # for compatibility
+        **kwargs,  # for compatibility
     ):
         super(ComplEx, self).__init__()
 
