@@ -24,3 +24,10 @@ poetry update --lock
 ```
 
 Currently, we don't track the `poetry.lock` file in the early development stage
+
+## Soft Query Dataset
+
+The project can load uncertain query datasets from
+the [Soft Queries on Uncertain KG](https://github.com/HKUST-KnowComp/Soft-Queries-on-Uncertain-KG)
+repository. Use `SoftPyGAADataset` and `SoftPyGAACollator` from
+`knovex.utils.dataloader` to work with these JSON files.

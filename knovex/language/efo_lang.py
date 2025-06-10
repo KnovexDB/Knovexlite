@@ -540,6 +540,8 @@ class EFOQuery:
         # easy and hard answers
         self.easy_answer_list = []
         self.hard_answer_list = []
+        # soft answers for uncertain queries
+        self.soft_answer_list = []
 
         # calculate the term and atomic dict
         self.term_dict: Dict[LStr, Term] = {}
@@ -586,6 +588,22 @@ class EFOQuery:
 
         assert len(self.easy_answer_list) == self.num_instances
         assert len(self.easy_answer_list) == len(self.hard_answer_list)
+
+    def append_soft_qaa_instance(self, append_dict, answer_dict, value_dict):
+        """Append a soft query instance with answer confidences."""
+        soft_ans = {}
+        for ans_key, ans_list in answer_dict.items():
+            var = ans_key.split("_")[0]
+            soft_ans[var] = {
+                "answers": ans_list,
+                "values": value_dict.get(f"{var}_values", [])
+            }
+        self.soft_answer_list.append(soft_ans)
+
+        _copy_append_dict = append_dict.copy()
+        self.formula.append_interpretation(_copy_append_dict)
+
+        assert len(self.soft_answer_list) == self.num_instances
 
     @property
     def free_variable_dict(self):
