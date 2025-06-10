@@ -532,10 +532,14 @@ class EFOQuery:
     """
 
     def __init__(self, formula: Formula) -> None:
-        # this is the formula and we don't change it!
+        # this is the original formula and we don't change it!
         self.formula: Formula = formula
-        # we don't maintain the additional version of formula
-        # self.dnf_formula: Formula = transform_to_dnf(formula)
+
+        # store the dnf version for later usage. The DNF transformation does
+        # not create new ``Atomic`` or ``Term`` objects so we can update the
+        # interpretation of ``self.formula`` and it will also reflect in the DNF
+        # form.
+        self.dnf_formula: Formula = transform_to_dnf(formula)
 
         # easy and hard answers
         self.easy_answer_list = []
@@ -624,7 +628,10 @@ class EFOQuery:
         """
         Get the PyG graph from the EFOQuery
         """
-        conj_list = transform_to_dnf(self.formula).formulas
+        # ``self.dnf_formula`` stores the DNF representation of the original
+        # query.  We reuse it here to avoid recomputing the transformation on
+        # every call.
+        conj_list = self.dnf_formula.formulas
         conj_query_list = []
         for conj in conj_list:
             _pyg_list_per_conj = ConjunctiveQuery(conj).get_pyg_graph_list()
@@ -753,8 +760,8 @@ class ConjunctiveQuery(EFOQuery):
         visited_vars = set(source_var_name)
         var_name_levels = [[(source_var_name, 0)]]
         while True:
+            next_var_name_level = []
             for var_name, order in var_name_levels[-1]:
-                next_var_name_level = []
                 for atomic_name in self.term_name2atomic_name_list[var_name]:
                     atomic = self.atomic_dict[atomic_name]
                     for term in atomic.get_terms():
