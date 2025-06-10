@@ -179,3 +179,93 @@ class PyGAADataset:
 
             datalist.extend(lstr_datalist)
         return datalist
+
+
+class SoftPyGAACollator:
+    def __call__(
+        self, batch_of_data: List[Tuple[List[Data], Dict, Dict]]
+    ) -> Tuple[Tuple[Batch], List[Dict], List[Dict]]:
+        num_conj_query = len(batch_of_data[0][0])
+
+        pyg_data_list_by_conj_query = [[] for _ in range(num_conj_query)]
+        answer_list = []
+        value_list = []
+        for conj_query_list, answers, values in batch_of_data:
+            for i in range(num_conj_query):
+                pyg_data_list_by_conj_query[i].append(conj_query_list[i])
+            answer_list.append(answers)
+            value_list.append(values)
+
+        batch_by_conj_query = [
+            Batch.from_data_list(pyg_data_list, follow_batch=["num_vars"])
+            for pyg_data_list in pyg_data_list_by_conj_query
+        ]
+
+        return batch_by_conj_query, answer_list, value_list
+
+
+class SoftPyGAADataset:
+    """Dataset for soft queries with answer confidences."""
+
+    def __init__(self, qaa_file, add_inverse_edge=True):
+        self.add_inverse_edge = add_inverse_edge
+        self.qaa_file = qaa_file
+
+        with open(qaa_file, "rt") as f:
+            qaa = json.load(f)
+
+        self._data_query_dict: Dict[str, EFOQuery] = {}
+        for lstr, _qaa in tqdm.tqdm(qaa.items(), desc="Loading qaa data"):
+            query = EFOQuery.from_lstr(lstr)
+            for inst in _qaa:
+                append_dict = inst[0]
+                ans_dict = inst[1] if len(inst) > 1 else {}
+                val_dict = inst[2] if len(inst) > 2 else {}
+                query.append_soft_qaa_instance(
+                    append_dict=append_dict,
+                    answer_dict=ans_dict,
+                    value_dict=val_dict,
+                )
+            self._data_query_dict[parse_lstr_to_lformula(lstr).lstr()] = query
+
+    def get_datalist_by_lstr(self, lstr_list=[]) -> List[Tuple[List[Data], Dict, Dict]]:
+        if len(lstr_list) == 0:
+            lstr_list = list(self._data_query_dict.keys())
+        else:
+            logger.info(f"Using the following lstrs: {lstr_list}")
+
+        datalist = []
+        for lstr in tqdm.tqdm(lstr_list, desc="Converting qaa data to PyG"):
+            cache_file = self.qaa_file.replace(".json", f"_{lstr}.pt")
+            if os.path.exists(cache_file):
+                logger.info(f"Loading cache file {cache_file}")
+                datalist.extend(torch.load(cache_file))
+                continue
+
+            query = self._data_query_dict[lstr]
+            pyg_graph_list = query.get_pyg_graph_list_by_sub_conjunctive_queries()
+            soft_answer_list = query.soft_answer_list
+
+            lstr_datalist = []
+            for i, soft_ans in enumerate(soft_answer_list):
+                conj_pyg_list = [
+                    add_inverse_edge(g[i]) if self.add_inverse_edge else g[i]
+                    for g in pyg_graph_list
+                ]
+
+                answers = {
+                    k: torch.tensor(v["answers"], dtype=torch.long)
+                    for k, v in soft_ans.items()
+                }
+                values = {
+                    k: torch.tensor(v["values"], dtype=torch.float)
+                    for k, v in soft_ans.items()
+                }
+
+                lstr_datalist.append((conj_pyg_list, answers, values))
+
+            torch.save(lstr_datalist, cache_file)
+            logger.info(f"Saving cache file {cache_file}")
+
+            datalist.extend(lstr_datalist)
+        return datalist
