@@ -2,11 +2,7 @@ import collections
 import hashlib
 from functools import partial
 from itertools import repeat
-import re
-import warnings
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import os
 from os.path import join, dirname, realpath, exists
 from shutil import rmtree

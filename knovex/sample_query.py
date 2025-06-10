@@ -1,27 +1,19 @@
-import sys
 import argparse
 import json
-import logging
 import os
 import os.path as osp
 import random
-from collections import defaultdict
 
-import numpy as np
 import pandas as pd
-import torch
-import torch.nn.functional as F
 import tqdm
-from torch import nn
 
-from knovex.language.tnorm import GodelTNorm, ProductTNorm, Tnorm
+
 # from knovex.structure import get_nbp_class
 from knovex.structure.kg.graph import KnowledgeGraph, kg2matrix
 from knovex.structure.kg.index import KGIndex
-from knovex.utils.data_util import RaggedBatch
-from knovex.utils.data_util import name2lstr, newlstr2name, index2newlstr, index2EFOX_minimal
+from knovex.utils.data_util import index2newlstr, index2EFOX_minimal
 from knovex.language.grammar import parse_lstr_to_disjunctive_formula
-from knovex.language.efo_lang import Disjunction, Conjunction, EFOQuery
+from knovex.language.efo_lang import Conjunction, EFOQuery
 
 
 

@@ -1,8 +1,7 @@
 import logging
 from typing import Optional, List
-from random import choice
 
-from torch_geometric.nn import MessagePassing
+
 from knovex.structure.kg.graph import KnowledgeGraph
 from torch_geometric.data import Batch
 from collections import defaultdict
@@ -16,7 +15,7 @@ from knovex.structure.kg_embedding.abstract_kge import (
     KnowledgeGraphEmbedding as KGE,
 )
 from knovex.reasoner.abstract_reasoner import Reasoner
-from knovex.layers.mlp import MLP
+
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +57,9 @@ class FIT(nn.Module, Reasoner):
                 self.relation_matrix_list[i] = self.relation_matrix_list[i].to(self.dtype).to(self.device)
         
 
-    def construct_relation_matrix_list_with_nbp():
-        assert self.kg != None
-        pass
+    def construct_relation_matrix_list_with_nbp(self):
+        assert self.kg is not None
+        raise NotImplementedError
 
 
     def forward(self, batch: Batch):
@@ -101,9 +100,7 @@ class FIT(nn.Module, Reasoner):
         """
         Compute the training loss.
         """
-        pass
-
-        return loss.mean()
+        raise NotImplementedError
 
     def train_loss_softmax(self, batch: Batch, answers: List[List[int]]):
         """
@@ -259,7 +256,6 @@ def solve_EFOX(conj_formula, relation_matrix, conjunctive_tnorm, existential_tno
 
         sub_graph_neg.edge_attr = sub_graph_neg.edge_attr[~indicate_pos]
         sub_graph_neg.edge_index = sub_graph_neg.edge_index[:, ~indicate_pos]
-        sub_graph_edge, sub_graph_negation_edge = [], []
 
         free_variable_list = [i for i, indicate_n in enumerate(conj_formula[0][0].x[:,1]) if indicate_n.item() == 2]
         free_variable_list.sort()
@@ -438,3 +434,13 @@ def compute_single_evaluation(fof, batch_ans_tensor, n_entity, eval_device):
             three_marginal_logs, two_marginal_logs, one_marginal_logs, no_marginal_logs = evaluate_batch_joint(
                 ranking, fof.easy_answer_list, fof.hard_answer_list, eval_device, f_str)
             return three_marginal_logs, two_marginal_logs, one_marginal_logs, no_marginal_logs
+
+
+def ranking2metrics(ranking, easy_ans, hard_ans, device):
+    """Placeholder for missing metric computation."""
+    raise NotImplementedError
+
+
+def evaluate_batch_joint(*args, **kwargs):
+    """Placeholder for joint batch evaluation."""
+    raise NotImplementedError
