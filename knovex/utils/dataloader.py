@@ -8,7 +8,7 @@ from torch_geometric.data import Batch, Data
 import tqdm
 
 
-from engine.language.efo_lang import EFOQuery, parse_lstr_to_lformula
+from knovex.language.efo_lang import EFOQuery, parse_lstr_to_lformula
 
 logger = logging.getLogger(__name__)
 
@@ -156,7 +156,7 @@ class PyGAADataset:
             )
             easy_answer_list = query.easy_answer_list
             hard_answer_list = query.hard_answer_list
-
+            ans_key = '_'.join(query.free_variable_dict.keys())
             lstr_datalist = []
             for i, (easy_answer, hard_answer) in enumerate(
                 zip(easy_answer_list, hard_answer_list)
@@ -166,9 +166,9 @@ class PyGAADataset:
                     for g in pyg_graph_list
                 ]
 
-                _easy_answer = torch.tensor(easy_answer["f"], dtype=torch.long)
-                if "f" in hard_answer:
-                    _hard_answer = torch.tensor(hard_answer["f"], dtype=torch.long)
+                _easy_answer = torch.tensor(easy_answer[ans_key], dtype=torch.long)
+                if ans_key in hard_answer:
+                    _hard_answer = torch.tensor(hard_answer[ans_key], dtype=torch.long)
                 else:
                     _hard_answer = []
 
